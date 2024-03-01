@@ -38,12 +38,12 @@ async function mergeRoutes(coordinates) {
         osrmServers.push('http://localhost:' + port)
 
     const routePromises = osrmServers.map(server => fetchRouteFromOSRM(server, coordinates));
-    const routes = await Promise.all(routePromises);
+    const fetchedRoutes = await Promise.all(routePromises);
 
     // Filter out any null responses and then merge routes as needed
     // For demonstration, we're simply returning the collected routes
     // A real merge would consider how to combine these routes intelligently
-    return routes.filter(route => route !== null);
+    return fetchedRoutes.filter(route => route !== null);
 }
 
 // Define a route handler for your Express server to accept route requests
