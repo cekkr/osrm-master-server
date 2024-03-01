@@ -2,6 +2,9 @@
 import express from 'express';
 import fetch from 'node-fetch';
 
+import { spawn } from 'child_process';
+import net from 'net';
+
 const app = express();
 const port = 3000; // The port your proxy server will run on
 
@@ -55,3 +58,63 @@ app.get('/route/:coordinates', async (req, res) => {
 app.listen(port, () => {
   console.log(`Server running on port ${port}`);
 });
+
+
+///
+///
+///
+
+
+// Function to check if a port is available
+function checkPort(port) {
+    return new Promise((resolve, reject) => {
+      const server = net.createServer();
+      server.listen(port, () => {
+        server.close(() => resolve(true)); // Port is available
+      });
+      server.on('error', (err) => {
+        if (err.code === 'EADDRINUSE') {
+          resolve(false); // Port is in use
+        } else {
+          reject(err); // Some other error
+        }
+      });
+    });
+  }
+  
+  // Function to find the first available port starting from a given port
+  async function findAvailablePort(startPort) {
+    let port = startPort;
+    while (true) {
+      if (await checkPort(port)) {
+        return port;
+      }
+      port++;
+    }
+  }
+  
+  // Function to start an osrm-routed server with the first available port
+  async function startOsrmServer(osrmPaths) {
+    const startPort = 5001;
+    const port = await findAvailablePort(startPort);
+  
+    // Attempt to start an OSRM server for each path until one succeeds
+    for (const path of osrmPaths) {
+      try {
+        const osrmProcess = spawn('osrm-routed', ['--algorithm', 'mld', path, '-p', port.toString()], { stdio: 'inherit' });
+        
+        osrmProcess.on('error', (err) => {
+          console.error(`Failed to start osrm-routed for ${path}:`, err);
+        });
+  
+        console.log(`osrm-routed server started for ${path} on port ${port}`);
+        break; // Stop after successfully starting the first server
+      } catch (error) {
+        console.error(`Error starting osrm-routed server for ${path}:`, error);
+      }
+    }
+  }
+  
+  // Example usage with a list of OSRM data paths
+  //const osrmPaths = ['/path/to/your-data.osrm', '/another/path/data.osrm'];
+  //startOsrmServer(osrmPaths).catch(console.error);
