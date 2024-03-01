@@ -53,6 +53,7 @@ app.get('/route/:coordinates', async (req, res) => {
         const mergedRoutes = await mergeRoutes(coordinates);
         res.json({ routes: mergedRoutes });
     } catch (error) {
+        console.error(error)
         res.status(500).send('Failed to merge routes');
     }
 });
@@ -121,4 +122,5 @@ async function startOsrmServer(osrmPaths) {
 
 // Example usage with a list of OSRM data paths
 //const osrmPaths = ['/path/to/your-data.osrm', '/another/path/data.osrm'];
+console.log("starting routers ", Settings.routes)
 startOsrmServer(Settings.routes).catch(console.error);
