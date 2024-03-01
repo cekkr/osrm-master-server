@@ -108,12 +108,26 @@ async function startOsrmServer(osrmPaths) {
             const osrmProcess = spawn('osrm-routed', ['--algorithm', 'mld', path, '-p', port.toString()], { stdio: 'inherit' });
             route.process = osrmProcess
 
+            // Handle stdout
+            osrmProcess.stdout.on('data', (data) => {
+                console.log(`stdout: ${data}`);
+            });
+
+            // Handle stderr
+            osrmProcess.stderr.on('data', (data) => {
+                console.error(`stderr: ${data}`);
+            });
+
             osrmProcess.on('error', (err) => {
                 console.error(`Failed to start osrm-routed for ${path}:`, err);
             });
 
+            osrmProcess.on('close', (code) => {
+                console.log(`osrm-routed process for ${path} exited with code ${code}`);
+            });
+
             console.log(`osrm-routed server started for ${path} on port ${port}`);
-            break; // Stop after successfully starting the first server
+
         } catch (error) {
             console.error(`Error starting osrm-routed server for ${path}:`, error);
         }
