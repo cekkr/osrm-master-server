@@ -1,0 +1,27 @@
+{
+  "name": "osrm-master-server",
+  "version": "0.0.1",
+  "description": "Multiple OSRM routing servers in one",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cekkr/osrm-master-server.git"
+  },
+  "keywords": [
+    "osrm",
+    "master"
+  ],
+  "author": "cekkr",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/cekkr/osrm-master-server/issues"
+  },
+  "homepage": "https://github.com/cekkr/osrm-master-server#readme",
+  "dependencies": {
+    "express": "^4.18.3",
+    "node-fetch": "^3.3.2"
+  }
+}
